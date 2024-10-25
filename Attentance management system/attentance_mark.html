@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Attendance - Attendance Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold">Mark Attendance</h1>
+        <div>
+            <button class="bg-blue-500 text-white py-2 px-4 rounded-lg mr-4 hover:bg-blue-600">Submit</button>
+            <button class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600">Clear All</button>
+        </div>
+    </div>
+    <div class="bg-white shadow-md rounded-lg p-4">
+        <table class="min-w-full text-left">
+            <thead>
+                <tr class="border-b bg-gray-50">
+                    <th class="p-4">Employee Name</th>
+                    <th class="p-4">Present</th>
+                    <th class="p-4">Absent</th>
+                    <th class="p-4">Leave</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b">
+                    <td class="p-4">John Doe</td>
+                    <td class="p-4">
+                        <input type="radio" name="attendance-john" class="form-radio text-blue-500">
+                    </td>
+                    <td class="p-4">
+                        <input type="radio" name="attendance-john" class="form-radio text-blue-500">
+                    </td>
+                    <td class="p-4">
+                        <input type="radio" name="attendance-john" class="form-radio text-blue-500">
+                    </td>
+                </tr>
+                <tr class="border-b">
+                    <td class="p-4">Jane Smith</td>
+                    <td class="p-4">
+                        <input type="radio" name="attendance-jane" class="form-radio text-blue-500">
+                    </td>
+                    <td class="p-4">
+                        <input type="radio" name="attendance-jane" class="form-radio text-blue-500">
+                    </td>
+                    <td class="p-4">
+                        <input type="radio" name="attendance-jane" class="form-radio text-blue-500">
+                    </td>
+                </tr>
+                <tr class="border-b">
+                    <td class="p-4">Alice Johnson</td>
+                    <td class="p-4">
+                        <input type="radio" name="attendance-alice" class="form-radio text-blue-500">
+                    </td>
+                    <td class="p-4">
+                        <input type="radio" name="attendance-alice" class="form-radio text-blue-500">
+                    </td>
+                    <td class="p-4">
+                        <input type="radio" name="attendance-alice" class="form-radio text-blue-500">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
