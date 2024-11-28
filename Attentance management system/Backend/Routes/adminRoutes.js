@@ -3,6 +3,9 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { authenticate } from "../Middleware/auth.js";
 import mongoose from 'mongoose';
+import moment from 'moment';
+
+
 
 const Route = Router()
 
@@ -134,87 +137,138 @@ Route.get('/logout', authenticate, (req, res) => {
 
 });
 
+
+// Route.post('/leaveRequest', authenticate, async (req, res) => {
+//     try {
+//         console.log('Leave request initiated');
+//         console.log(req.Name); // You may need to validate that Name is available
+//         console.log(req.Role); // You can also remove or keep this for debugging purposes if needed
+
+//         const { employee_Id, leaveType, startDate, endDate, reason } = req.body;
+
+//         // Check if employee exists
+//         const existingUser = await user.findOne({ employeeId: employee_Id });
+//         if (!existingUser) {
+//             return res.status(400).json({ message: "Employee ID not found" });
+//         }
+
+//         // Check if a leave request already exists for the current day
+//         const today = moment().startOf('day');
+//         const existingLeave = await leave.findOne({
+//             employee_Id: employee_Id,
+//             requestDate: { $gte: today.toDate(), $lt: moment(today).endOf('day').toDate() },
+//         });
+
+//         if (existingLeave) {
+//             return res.status(400).json({ message: "You have already submitted a leave request today" });
+//         }
+
+//         // Create the leave request without checking for role
+//         const newLeaveRequest = new Leave({
+//             employee_Id: employee_Id,
+//             leaveType: leaveType,
+//             startDate: new Date(startDate),
+//             endDate: new Date(endDate),
+//             reason: reason,
+//         });
+
+//         // Save the leave request
+//         await newLeaveRequest.save();
+//         res.status(200).json({ message: "Leave Requested successfully", leave: newLeaveRequest });
+//         console.log(newLeaveRequest);
+        
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error processing leave request', error: error.message });
+//         console.log(error);
+//     }
+// });
+
 Route.post('/leaveRequest', authenticate, async (req, res) => {
     try {
-        console.log('leave request')
-        console.log(req.Name)
-        console.log(req.Role)
         const { employee_Id, leaveType, startDate, endDate, reason } = req.body;
-        const existingUser = await user.findOne({ employeeId: employee_Id })
 
+        // Ensure that all necessary fields are present
+        if (!employee_Id || !leaveType || !startDate || !endDate || !reason) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        // Check if the employee exists
+        const existingUser = await user.findOne({ employeeId: employee_Id });
         if (!existingUser) {
             return res.status(400).json({ message: "Employee ID not found" });
         }
 
-        if (req.Role == "employee") {
-            if (existingUser) {
-                const newLeaverequest = new leave({
-                    employee_Id: employee_Id,
-                    leaveType: leaveType,
-                    startDate: startDate,
-                    endDate: endDate,
-                    reason: reason
-                })
-                await newLeaverequest.save();
-                res.status(200).json({ message: "Leave Requested sucessfully" })
-                console.log(newLeaverequest)
-            }
+        // Check if the employee already has a leave request for today
+        const today = moment().startOf('day');
+        const existingLeave = await leave.findOne({
+            employee_Id: employee_Id,
+            requestDate: { $gte: today.toDate(), $lt: moment(today).endOf('day').toDate() },
+        });
 
-        }
-        else {
-            res.status(400).json({ message: 'Employee id is not Correct' })
-            console.log("Employee id is not Correct")
+        if (existingLeave) {
+            return res.status(400).json({ message: "You have already submitted a leave request today" });
         }
 
-    }
-    catch (error) {
-        res.status(500).json(error);
-        console.log(error);
+        // Create the new leave request
+        const newLeaveRequest = new leave({
+            employee_Id: employee_Id,
+            leaveType: leaveType,
+            startDate: new Date(startDate),
+            endDate: new Date(endDate),
+            reason: reason,
+            requestDate: moment().toDate(),  // Add a request date if needed
+        });
 
-    }
-})
+        // Save the new leave request to the database
+        await newLeaveRequest.save();
 
-Route.post('/markAttendance', authenticate, async (req, res) => {
-    try {
-        console.log('Marking attendance');
-        console.log(req.Name);
-        console.log(req.Role);
-
-        const { employee_Id } = req.body
-        const today = new Date();
-        console.log("Current Date and Time:", today); // Outputs the full date and time
-        today.setHours(0, 0, 0, 0); // Set time to midnight for date-only comparison
-
-        const checkUser = await user.findOne({ employeeId: employee_Id })
-        if (checkUser) {
-            // Check if attendance has already been marked for today
-            const existingAttendance = await attendance.findOne({ employee_Id: employee_Id })
-            if (existingAttendance) {
-                return res.status(400).json({ message: "Attendance already marked for today" });
-            }
-
-            // If not already marked, create a new attendance record
-            const newAttendance = new attendance({
-                employee_Id: employee_Id,
-                date: today,
-                status: 'present', // Default to 'present', could add more logic for other statuses if needed
-                timestamp: new Date() // Mark the exact time of attendance
-            });
-
-            await newAttendance.save();
-            res.status(200).json({ message: "Attendance marked successfully", attendance: newAttendance });
-            console.log(newAttendance);
-        }
-        else {
-            res.status(400).json({ message: "employee id not correct" })
-        }
+        res.status(200).json({ message: "Leave Requested successfully", leave: newLeaveRequest });
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "An error occurred while marking attendance", error });
+        res.status(500).json({ message: 'Error processing leave request', error: error.message });
     }
 });
 
+
+Route.post('/markAttendance', async (req, res) => {
+    try {
+      const { employee_Id, date, status } = req.body;
+  
+      // Check if employee exists
+      const existingUser = await user.findOne({ employeeId: employee_Id });
+      if (!existingUser) {
+        return res.status(400).json({ message: 'Invalid employee ID.' });
+      }
+  
+      // Normalize date to compare without time
+      const attendanceDate = new Date(date);
+      attendanceDate.setHours(0, 0, 0, 0);
+  
+      // Check if attendance is already marked
+      const existingAttendance = await attendance.findOne({
+        employee_Id,
+        date: attendanceDate,
+      });
+      if (existingAttendance) {
+        return res.status(400).json({ message: 'Attendance already marked for this date.' });
+      }
+  
+      // Create new attendance record
+      const newAttendance = new attendance({
+        employee_Id,
+        date: attendanceDate,
+        status,
+        timestamp: new Date(),
+      });
+  
+      await newAttendance.save();
+      res.status(200).json({ message: 'Attendance marked successfully.', attendance: newAttendance });
+    } catch (error) {
+      console.error('Error marking attendance:', error);
+      res.status(500).json({ message: 'An error occurred while marking attendance.', error });
+    }
+  });
 
 Route.post('/addUser', authenticate, async (req, res) => {
     try {
@@ -383,5 +437,108 @@ Route.get('/adminName',async(req,res)=>{
         res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 })
+
+//for getting employee data for leave request
+Route.get('/employee/:name',async(req,res)=>{
+
+    try {
+        const empName = req.params.name
+        console.log(empName);
+        
+    
+        const Result = await user.findOne({Name:empName})
+        if(!Result){
+           return res.status(400).json({message:"User not Found"})
+        }else{
+            console.log(Result)
+           return res.status(200).json({Result})
+            
+        }
+    } catch (error) {
+        console.log(error);
+        
+    }
+
+})
+
+//for getting employeeid only for mark attentance
+Route.get('/employeeidOnly/:name', async (req, res) => {
+    try {
+      const empName = req.params.name;
+      console.log(empName);
+  
+      // Find the user by name
+      const Result = await user.findOne({ Name: empName });
+      
+      if (!Result) {
+        return res.status(400).json({ message: "User not found" });
+      } else {
+        // Send only employeeId in the response
+        console.log(Result); // Log the full result to see the structure
+        return res.status(200).json({ employeeId: Result.employeeId });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  });
+  
+  
+Route.put('/attentanceUpadte/:id',async(req,res)=>{
+
+    const {id} = req.params
+    
+    const newStatus = req.body;
+
+        try {
+            const updatedatt = await attendance.findOneAndUpdate(
+                { id }, // Find the attentance by its id
+                newStatus, // Update the attentance with the new data
+                { new: true } // Return the updated attentance
+              );
+              if (!updatedatt) {
+                return res.status(404).json({ message: 'Dish not found' });
+              }
+              res.status(200).json(updatedatt); // Return the updated attentance details
+            } catch (error) {
+              res.status(500).json({ message: 'Error updating dish', error: error.message });
+            }
+    
+})
+Route.put('/updateLeave/:id', async (req, res) => {
+    const { id } = req.params; // Extract leave request ID from URL
+    const { status } = req.body; // Extract status from the request body
+  
+    // Validate the request body
+    if (!status || !['pending', 'approved', 'rejected'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status value. Allowed values are pending, approved, or rejected.' });
+    }
+  
+    try {
+      // Find the leave request by ID and update the status
+      const updatedLeave = await leave.findByIdAndUpdate(
+        id,
+        { status }, // Update the status
+        { new: true } // Return the updated document
+      );
+  
+      if (!updatedLeave) {
+        return res.status(404).json({ message: 'Leave request not found' });
+      }
+  
+      // Respond with the updated leave request
+      res.status(200).json({
+        message: 'Leave request status updated successfully',
+        data: updatedLeave,
+      });
+    } catch (error) {
+      console.error('Error updating leave request:', error);
+      res.status(500).json({
+        message: 'Error updating leave request',
+        error: error.message,
+      });
+    }
+  });
+  
 
 export { Route };

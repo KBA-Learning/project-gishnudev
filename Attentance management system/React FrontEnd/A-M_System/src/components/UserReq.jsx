@@ -43,7 +43,7 @@ const UserReq = () => {
 
   const handleStatusChange = (id, value) => {
     setAllReq((prev) =>
-      prev.map((req) => (req._id === id ? { ...req, pending: value } : req))
+      prev.map((req) => (req._id === id ? { ...req, status: value } : req))
     );
   };
 
@@ -57,7 +57,7 @@ const UserReq = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ pending: leave.pending }),
+        body: JSON.stringify({ status: leave.status }),
       });
 
       if (res.ok) {
@@ -87,7 +87,7 @@ const UserReq = () => {
             <th className="py-2 px-4 border-b">End Date</th>
             <th className="py-2 px-4 border-b">Reason</th>
             <th className="py-2 px-4 border-b">Request Date</th>
-            <th className="py-2 px-4 border-b">Pending Request</th>
+            <th className="py-2 px-4 border-b">Status</th>
             <th className="py-2 px-4 border-b">Actions</th>
           </tr>
         </thead>
@@ -104,12 +104,12 @@ const UserReq = () => {
               <td className="py-2 px-4 border-b">
                 <select
                   className="border border-gray-300 rounded p-1"
-                  value={leave.pending || 'Pending'}
+                  value={leave.status}
                   onChange={(e) => handleStatusChange(leave._id, e.target.value)}
                 >
-                  <option value="Pending">Pending</option>
-                  <option value="Approved">Approved</option>
-                  <option value="Rejected">Rejected</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
                 </select>
               </td>
               <td className="py-2 px-4 border-b">

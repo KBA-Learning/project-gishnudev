@@ -31,7 +31,6 @@ const Login = () => {
       });
       
       const user = await data.json();
-      localStorage.setItem('Name', Name);
       console.log(user);
       console.log("Login success");
 
@@ -39,11 +38,13 @@ const Login = () => {
       toast.success("Logging in...");
       setTimeout(() => {
         if (user === "admin") {
+          localStorage.setItem('Name', Name); 
           navigate("/AdminDash");
         } else {
+          localStorage.setItem('Name', Name); 
           navigate("/UserDash");
         }
-      }, 3000);
+      }, 1000);
     } else {
       toast.error("Please check your credentials.");
     }

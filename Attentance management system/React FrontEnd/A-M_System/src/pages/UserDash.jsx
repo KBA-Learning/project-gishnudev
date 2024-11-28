@@ -8,10 +8,12 @@ import userImg from '../assets/symbols/user.png';
 import AddUser from '../components/AddUser';
 import ViewUser from '../components/ViewUser';
 import UserReq from '../components/UserReq';
+import LeaveRequest from '../components/leaveRequest';
+import MarkAttendance from '../components/MarkAttentance';
 
 const UserDash = () => {
   const [activeComponent, setActiveComponent] = useState('dashboard'); // State to track the active component
-  const [userName, setuserName] = useState(''); // State to store admin name
+  const [userName, setuserName] = useState(''); // State to store user name
 
   useEffect(() => {
     const storedUserName = localStorage.getItem('Name');
@@ -40,24 +42,24 @@ const UserDash = () => {
             </li>
             <li
               className="p-3 hover:bg-blue-500 rounded-lg mb-4 flex cursor-pointer"
-              onClick={() => handleSectionChange('employees')}
+              onClick={() => handleSectionChange('MarkAttendance')}
             >
               <img className="w-8 mr-6" src={userCheck} alt="" />
-              <span className="p-1">Employees</span>
+              <span className="p-1">Mark Attentance</span>
             </li>
             <li
               className="p-3 hover:bg-blue-500 rounded-lg mb-4 flex cursor-pointer"
-              onClick={() => handleSectionChange('addUser')}
+              onClick={() => handleSectionChange('Requestsleave')}
             >
               <img className="w-8 mr-6" src={profit} alt="" />
-              <span className="p-1">Add User</span>
+              <span className="p-1">Request Leave</span>
             </li>
             <li
               className="p-3 hover:bg-blue-500 rounded-lg mb-4 flex cursor-pointer"
-              onClick={() => handleSectionChange('leaveRequests')}
+              onClick={() => handleSectionChange('dashboard')}
             >
               <img className="w-8 mr-6 filter grayscale brightness-0" src={absent} alt="" />
-              <span className="p-1">Leave Requests</span>
+              <span className="p-1">######</span>
             </li>
             <li
               className="p-3 hover:bg-blue-500 rounded-lg mb-4 flex cursor-pointer"
@@ -95,9 +97,9 @@ const UserDash = () => {
                 {/* Add dashboard-specific content here */}
               </div>
             )}
-            {activeComponent === 'addUser' && <AddUser />}
+            {activeComponent === 'MarkAttendance' && <MarkAttendance />}
+            {activeComponent === 'Requestsleave' && <LeaveRequest />}
             {activeComponent === 'employees' && <ViewUser />}
-            {activeComponent === 'leaveRequests' && <UserReq />}
             {activeComponent === 'settings' && (
               <div>
                 <h2 className="text-2xl font-bold">Settings Section</h2>
