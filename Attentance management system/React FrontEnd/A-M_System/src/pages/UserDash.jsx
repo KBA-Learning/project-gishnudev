@@ -3,11 +3,8 @@ import homeimg from '../assets/symbols/home.png';
 import userCheck from '../assets/symbols/user-check.png';
 import profit from '../assets/symbols/profit-report.png';
 import settings from '../assets/symbols/settings.png';
-import absent from '../assets/symbols/absent.png';
 import userImg from '../assets/symbols/user.png';
-import AddUser from '../components/AddUser';
 import ViewUser from '../components/ViewUser';
-import UserReq from '../components/UserReq';
 import LeaveRequest from '../components/leaveRequest';
 import MarkAttendance from '../components/MarkAttentance';
 
@@ -53,13 +50,6 @@ const UserDash = () => {
             >
               <img className="w-8 mr-6" src={profit} alt="" />
               <span className="p-1">Request Leave</span>
-            </li>
-            <li
-              className="p-3 hover:bg-blue-500 rounded-lg mb-4 flex cursor-pointer"
-              onClick={() => handleSectionChange('dashboard')}
-            >
-              <img className="w-8 mr-6 filter grayscale brightness-0" src={absent} alt="" />
-              <span className="p-1">######</span>
             </li>
             <li
               className="p-3 hover:bg-blue-500 rounded-lg mb-4 flex cursor-pointer"

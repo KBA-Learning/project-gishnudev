@@ -137,52 +137,6 @@ Route.get('/logout', authenticate, (req, res) => {
 
 });
 
-
-// Route.post('/leaveRequest', authenticate, async (req, res) => {
-//     try {
-//         console.log('Leave request initiated');
-//         console.log(req.Name); // You may need to validate that Name is available
-//         console.log(req.Role); // You can also remove or keep this for debugging purposes if needed
-
-//         const { employee_Id, leaveType, startDate, endDate, reason } = req.body;
-
-//         // Check if employee exists
-//         const existingUser = await user.findOne({ employeeId: employee_Id });
-//         if (!existingUser) {
-//             return res.status(400).json({ message: "Employee ID not found" });
-//         }
-
-//         // Check if a leave request already exists for the current day
-//         const today = moment().startOf('day');
-//         const existingLeave = await leave.findOne({
-//             employee_Id: employee_Id,
-//             requestDate: { $gte: today.toDate(), $lt: moment(today).endOf('day').toDate() },
-//         });
-
-//         if (existingLeave) {
-//             return res.status(400).json({ message: "You have already submitted a leave request today" });
-//         }
-
-//         // Create the leave request without checking for role
-//         const newLeaveRequest = new Leave({
-//             employee_Id: employee_Id,
-//             leaveType: leaveType,
-//             startDate: new Date(startDate),
-//             endDate: new Date(endDate),
-//             reason: reason,
-//         });
-
-//         // Save the leave request
-//         await newLeaveRequest.save();
-//         res.status(200).json({ message: "Leave Requested successfully", leave: newLeaveRequest });
-//         console.log(newLeaveRequest);
-        
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error processing leave request', error: error.message });
-//         console.log(error);
-//     }
-// });
-
 Route.post('/leaveRequest', authenticate, async (req, res) => {
     try {
         const { employee_Id, leaveType, startDate, endDate, reason } = req.body;
@@ -539,6 +493,7 @@ Route.put('/updateLeave/:id', async (req, res) => {
       });
     }
   });
+  
   
 
 export { Route };
