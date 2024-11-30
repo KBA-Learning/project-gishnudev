@@ -59,6 +59,12 @@ const Attendance = () => {
   }
 
   //No of leave taken
+  const findLeavestaken = (records) =>{
+
+    const leaveCounts = records.filter((record) => record.status === 'leave').length;
+    return(leaveCounts)
+  }
+
 
   const renderEmployeePage = () => {
     const groupedData = groupAttendanceByEmployeeId();
@@ -69,6 +75,8 @@ const Attendance = () => {
     const { employee_Id, records } = groupedData[currentPage - 1];
     const attendancePercentage = calculateAttendancePercentage(records);
     const absentCount = findAbsent(records);
+    const leaveCounts = findLeavestaken(records);
+
 
 
     return (
@@ -76,6 +84,7 @@ const Attendance = () => {
         <h2 className="text-lg font-semibold text-blue-600 mb-2">Employee ID: {employee_Id}</h2>
         <p className="text-sm text-gray-600"><strong>Attendance Percentage:</strong> {attendancePercentage}%</p>
         <p className="text-sm text-gray-600"><strong>Number of Absents:</strong> {absentCount}</p>
+        <p className="text-sm text-gray-600"><strong>Number of Leaves:</strong> {leaveCounts}</p>
         <div className="overflow-auto max-h-[700px] mt-4">
           <table className="w-full border-collapse border border-gray-300 rounded-lg">
             <thead className="bg-gray-200">
