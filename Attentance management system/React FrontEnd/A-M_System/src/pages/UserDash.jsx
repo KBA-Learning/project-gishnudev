@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import for navigation
+import axios from 'axios'; // Import axios
 import homeimg from '../assets/symbols/home.png';
 import userCheck from '../assets/symbols/user-check.png';
 import profit from '../assets/symbols/profit-report.png';
@@ -7,6 +9,32 @@ import userImg from '../assets/symbols/user.png';
 import ViewUser from '../components/ViewUser';
 import LeaveRequest from '../components/leaveRequest';
 import MarkAttendance from '../components/MarkAttentance';
+
+const LogoutButton = () => {
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    try {
+      // Call the backend logout API
+      const response = await axios.post('/api/logout');
+      console.log(response.data.message); // Log success message
+      localStorage.clear(); // Clear any stored data
+      navigate('/'); // Redirect to login page
+    } catch (error) {
+      console.error('Logout failed:', error.response?.data || error.message);
+      alert('Failed to log out. Please try again.');
+    }
+  };
+
+  return (
+    <button
+      onClick={logout}
+      className="ml-4 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 shadow-md"
+    >
+      Logout
+    </button>
+  );
+};
 
 const UserDash = () => {
   const [activeComponent, setActiveComponent] = useState('dashboard'); // State to track the active component
@@ -42,7 +70,7 @@ const UserDash = () => {
               onClick={() => handleSectionChange('MarkAttendance')}
             >
               <img className="w-8 mr-6" src={userCheck} alt="" />
-              <span className="p-1">Mark Attentance</span>
+              <span className="p-1">Mark Attendance</span>
             </li>
             <li
               className="p-3 hover:bg-blue-500 rounded-lg mb-4 flex cursor-pointer"
@@ -75,7 +103,9 @@ const UserDash = () => {
                 alt=""
                 className="w-16 h-16 bg-gray-300 p-4 rounded-full shadow-md shadow-blue-300"
               />
-              <h2 className="ml-4">Welcome User{userName && `, ${userName}`}</h2>
+              <h2 className="ml-4">Welcome{userName && `, ${userName}`}</h2>
+              {/* Logout Button */}
+              <LogoutButton />
             </div>
           </div>
 
@@ -103,4 +133,4 @@ const UserDash = () => {
   );
 };
 
-export default UserDash
+export default UserDash;

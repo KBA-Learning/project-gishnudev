@@ -1,69 +1,97 @@
-import { useEffect, useState } from 'react';
-import moment from 'moment';
+import { useEffect, useState } from "react";
+import moment from "moment";
 
 const MarkAttendance = () => {
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState("");
   const [employee_Id, setEmployeeId] = useState(null);
-  const [date, setDate] = useState('');
-  const [status, setStatus] = useState('');
+  const [date, setDate] = useState("");
+  const [status, setStatus] = useState("");
+  const [attendanceExists, setAttendanceExists] = useState(false); // New state
 
   useEffect(() => {
-    const storedUserName = localStorage.getItem('Name');
-    console.log('Stored User Name:', storedUserName);
+    const storedUserName = localStorage.getItem("Name");
+    console.log("Stored User Name:", storedUserName);
 
     if (storedUserName) {
       setUserName(storedUserName); // Set the retrieved name to state
       fetchEmployeeId(storedUserName); // Fetch employee ID based on stored user name
     } else {
-      console.error('Username not found in localStorage');
-      alert('User name not found. Please log in again.');
+      console.error("Username not found in localStorage");
+      alert("User name not found. Please log in again.");
     }
 
     // Set the current date using moment.js
-    setDate(moment().format('YYYY-MM-DD'));
-  }, []); // Empty dependency array ensures this effect runs only once after initial render
+    setDate(moment().format("YYYY-MM-DD"));
+  }, []);
 
-  // Function to fetch employee ID based on username
+  // Fetch employee ID and check attendance
   const fetchEmployeeId = async (userName) => {
     try {
       const res = await fetch(`/api/employee/${userName}`);
 
       if (res.ok) {
         const data = await res.json();
-        console.log('Employee ID fetched:', data.Result);
-        setEmployeeId(data.Result.employeeId); // Set fetched employee ID
+        console.log("Employee ID fetched:", data.Result);
+        setEmployeeId(data.Result.employeeId);
+
+        // Check if attendance already exists for today
+        checkAttendance(data.Result.employeeId, moment().format("YYYY-MM-DD"));
       } else {
-        console.error('Failed to fetch employee ID');
-        alert('User not found in the database. Please check your login details.');
+        console.error("Failed to fetch employee ID");
+        alert("User not found in the database. Please check your login details.");
       }
     } catch (error) {
-      console.error('Error fetching employee ID:', error);
-      alert('An error occurred while fetching employee ID.');
+      console.error("Error fetching employee ID:", error);
+      alert("An error occurred while fetching employee ID.");
     }
   };
 
-  // Function to submit attendance data
+  // Check if attendance exists
+  const checkAttendance = async (employeeId, date) => {
+    try {
+      const res = await fetch(`/api/attendance/${employeeId}/${date}`);
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.exists) {
+          setAttendanceExists(true); // Mark attendance as already recorded
+          alert("Attendance already marked for today.");
+        } else {
+          setAttendanceExists(false); // Allow marking attendance
+        }
+      } else {
+        console.error("Failed to check attendance status");
+        setAttendanceExists(false);
+      }
+    } catch (error) {
+      console.error("Error checking attendance:", error);
+      setAttendanceExists(false);
+    }
+  };
+
+  // Submit attendance data
   const attendanceSubmit = async (attendanceDetails) => {
     try {
       console.log(attendanceDetails);
-      const res = await fetch('/api/markAttendance', {
-        method: 'POST',
+      const res = await fetch("/api/markAttendance", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(attendanceDetails),
       });
 
       if (res.ok) {
-        alert('Attendance Marked Successfully');
+        alert("Attendance Marked Successfully");
+        setAttendanceExists(true); // Prevent further entries for today
       } else {
         const data = await res.json();
-        console.error('Error response from server:', data);
-        alert('Failed to mark attendance. Please check the details.');
+        console.error("Error response from server:", data);
+        alert("Failed to mark attendance. Please check the details.");
       }
     } catch (error) {
-      console.error('Error submitting attendance:', error);
-      alert('An error occurred while marking attendance.');
+      console.error("Error submitting attendance:", error);
+      alert("An error occurred while marking attendance.");
     }
   };
 
@@ -72,7 +100,12 @@ const MarkAttendance = () => {
     e.preventDefault();
 
     if (!employee_Id) {
-      alert('Employee ID is missing. Please refresh the page.');
+      alert("Employee ID is missing. Please refresh the page.");
+      return;
+    }
+
+    if (attendanceExists) {
+      alert("Attendance already marked for today.");
       return;
     }
 
@@ -100,7 +133,7 @@ const MarkAttendance = () => {
             type="text"
             id="employee_Id"
             name="employee_Id"
-            value={employee_Id}
+            value={employee_Id || ""}
             readOnly
             className="w-full border border-gray-300 rounded-lg p-2 bg-gray-100 cursor-not-allowed"
           />
@@ -133,6 +166,7 @@ const MarkAttendance = () => {
             onChange={(e) => setStatus(e.target.value)}
             className="w-full border border-gray-300 rounded-lg p-2"
             required
+            disabled={attendanceExists} // Disable if attendance exists
           >
             <option value="">Select Status</option>
             <option value="present">Present</option>
@@ -146,8 +180,9 @@ const MarkAttendance = () => {
           <button
             type="submit"
             className="w-full bg-blue-600 text-white rounded-lg p-2 hover:bg-blue-700"
+            disabled={attendanceExists} // Disable if attendance exists
           >
-            Mark Attendance
+            {attendanceExists ? "Already Marked" : "Mark Attendance"}
           </button>
         </div>
       </form>

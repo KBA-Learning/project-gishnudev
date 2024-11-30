@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import SignUp from '../pages/SignUp';
-
+import img from '../assets/images/img2.png'
 const Here = () => {
   return (
     <section className="relative flex items-center justify-center w-full py-20 lg:py-40 bg-black">
@@ -22,8 +21,7 @@ const Here = () => {
         </div>
         <div className="w-full lg:w-1/2">
           <img
-            src="https://cdn.devdojo.com/images/september2020/macbook-mockup.png"
-            alt="Mockup"
+            src={img}
             className="w-full"
           />
         </div>

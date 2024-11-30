@@ -93,12 +93,14 @@ Route.post('/signup', async (req, res) => {
 
 Route.post('/login', async (req, res) => {
     const data = req.body;
+    console.log(data);
+    
     const { Name, Password } = data;
 
     const result = await user.findOne({ Name: Name })
     console.log(result);
 
-    if (result) {
+    if (result.Role=="employee"||"admin") {
         console.log(Password)
         const invalid = await bcrypt.compare(Password, result.Password);
         console.log(invalid);
@@ -122,20 +124,20 @@ Route.post('/login', async (req, res) => {
 
 })
 
-Route.get('/logout', authenticate, (req, res) => {
-    try {
-        if (req.Role) {
-            res.clearCookie('authToken');
-            res.status(200).json({ message: "Logout successfull" });
-        } else {
-            res.status(404).json({ message: "No user found!" })
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" })
-    }
+// Route.get('/logout', authenticate, (req, res) => {
+//     try {
+//         if (req.Role) {
+//             res.clearCookie('authToken');
+//             res.status(200).json({ message: "Logout successfull" });
+//         } else {
+//             res.status(404).json({ message: "No user found!" })
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: "Server error" })
+//     }
 
-});
+// });
 
 Route.post('/leaveRequest', authenticate, async (req, res) => {
     try {
@@ -377,6 +379,20 @@ Route.get('/viewAllLeave', authenticate, async (req, res) => {
         res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 });
+//view all attentance
+Route.get('/viewAllattentance', authenticate, async (req, res) => {
+    try {
+        const allattendance = await attendance.find();
+        if (allattendance.length > 0) {
+            res.status(200).json(allattendance);
+        } else {
+            res.status(404).json({ message: 'No employees found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+});
 
 Route.get('/adminName',async(req,res)=>{
     try{
@@ -459,6 +475,7 @@ Route.put('/attentanceUpadte/:id',async(req,res)=>{
             }
     
 })
+
 Route.put('/updateLeave/:id', async (req, res) => {
     const { id } = req.params; // Extract leave request ID from URL
     const { status } = req.body; // Extract status from the request body
@@ -492,6 +509,11 @@ Route.put('/updateLeave/:id', async (req, res) => {
         error: error.message,
       });
     }
+  });
+
+  Route.post('/logout', (req, res) => {
+    // Clear the token on the frontend; no action needed server-side for stateless JWT
+    res.status(200).json({ message: 'Logout successful' });
   });
   
   

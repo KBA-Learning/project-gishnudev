@@ -18,7 +18,6 @@ const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
-      {/*Public Routes*/}
       <Route path="/" element={<Home />} />
       <Route path="/Login" element={<Login />} />
       <Route path="/SignUp" element={<SignUp />} />

@@ -31,7 +31,7 @@ const Login = () => {
       });
       
       const user = await data.json();
-      console.log(user);
+      console.log("User data:",user);
       console.log("Login success");
 
 

@@ -8,6 +8,8 @@ import userImg from '../assets/symbols/user.png';
 import AddUser from '../components/AddUser';
 import ViewUser from '../components/ViewUser';
 import UserReq from '../components/UserReq';
+import Attentance from '../components/Attentance'
+import division from '../assets/symbols/user.png'
 
 const AdminDash = () => {
   const [activeComponent, setActiveComponent] = useState('dashboard'); // State to track the active component
@@ -25,7 +27,7 @@ const AdminDash = () => {
   };
 
   return (
-    <div className="bg-gray-100 h-screen">
+    <div className="bg-gray-100 h-screen ">
       <div className="flex">
         {/* Sidebar */}
         <div className="bg-blue-800 w-1/5 h-screen p-4 font-bold text-white">
@@ -40,9 +42,16 @@ const AdminDash = () => {
             </li>
             <li
               className="p-3 hover:bg-blue-500 rounded-lg mb-4 flex cursor-pointer"
+              onClick={() => handleSectionChange('Attentance')}
+            >
+              <img className="w-8 mr-6 " src={userCheck} alt="" />
+              <span className="p-1">Attentance</span>
+            </li>
+            <li
+              className="p-3 hover:bg-blue-500 rounded-lg mb-4 flex cursor-pointer"
               onClick={() => handleSectionChange('employees')}
             >
-              <img className="w-8 mr-6" src={userCheck} alt="" />
+              <img className="w-8 mr-6 filter grayscale brightness-0" src={ division} alt="" />
               <span className="p-1">Employees</span>
             </li>
             <li
@@ -95,6 +104,13 @@ const AdminDash = () => {
                 {/* Add dashboard-specific content here */}
               </div>
             )}
+            {activeComponent === 'settings' && (
+              <div>
+                <h2 className="text-2xl font-bold">Attentance Section</h2>
+                {/* Add settings-specific content here */}
+              </div>
+            )}
+            {activeComponent === 'Attentance' && <Attentance />}
             {activeComponent === 'addUser' && <AddUser />}
             {activeComponent === 'employees' && <ViewUser />}
             {activeComponent === 'leaveRequests' && <UserReq />}

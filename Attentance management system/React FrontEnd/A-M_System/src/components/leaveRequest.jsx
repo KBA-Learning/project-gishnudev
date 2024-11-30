@@ -16,28 +16,21 @@ const LeaveRequest = () => {
     const fetchEmployeeId = async () => {
       try {
         const employeeName = localStorage.getItem("Name");
-        console.log('Stored User Name:', employeeName); // Corrected variable name
-
+  
         if (!employeeName) {
           setError("Employee name not found in localStorage");
           return;
         }
   
         const response = await fetch(`/api/employeeidOnly/${employeeName}`);
-        console.log(response);
-        
         if (!response.ok) {
           throw new Error("Failed to fetch employee ID");
         }
   
         const data = await response.json();
-        console.log(data)
-        
-  
-        // Ensure employee_Id is always a string, defaulting to empty if not available
         setFormData((prevData) => ({
           ...prevData,
-          employee_Id: data.employeeId || "",  // Ensures it never becomes undefined
+          employee_Id: data.employeeId || "",
         }));
       } catch (err) {
         console.error("Error fetching employee ID:", err);
@@ -57,37 +50,40 @@ const LeaveRequest = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    if (new Date(formData.startDate) > new Date(formData.endDate)) {
+      setError("Start date cannot be later than end date");
+      return;
+    }
+  
     try {
       const response = await fetch("/api/leaveRequest", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          credentials: "include",
-        },
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(formData),
       });
-
+  
       const data = await response.json();
-
-      if (response.ok) {
-        setMessage(data.message);
-        setFormData({
-          employee_Id: formData.employee_Id, // Keep the ID intact
-          leaveType: "",
-          startDate: "",
-          endDate: "",
-          reason: "",
-        });
-      } else {
-        setError(data.message || "An error occurred while submitting the request");
+  
+      if (!response.ok) {
+        throw new Error(data.message || "An error occurred while submitting the request");
       }
+  
+      setMessage(data.message);
+      setFormData({
+        employee_Id: formData.employee_Id,
+        leaveType: "",
+        startDate: "",
+        endDate: "",
+        reason: "",
+      });
     } catch (err) {
       console.error("Error submitting leave request:", err);
-      setError("An error occurred while submitting the request");
+      setError(err.message || "An error occurred while submitting the request");
     }
   };
-
+  
   return (
     <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg p-6">
       <h2 className="text-2xl font-bold mb-4">Leave Request</h2>

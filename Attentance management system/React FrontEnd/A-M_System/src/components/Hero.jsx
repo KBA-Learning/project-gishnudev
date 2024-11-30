@@ -20,8 +20,8 @@ const Hero = () => {
 
         {/* Overlay Content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white bg-black bg-opacity-50 px-4">
-          <h1 className="text-4xl font-extrabold sm:text-6xl">
-            Smart Attendance Pro
+          <h1 className="text-8xl font-extrabold ">
+          Attendly
           </h1>
           <p className="mt-4 text-lg sm:text-xl">
             The Ultimate Solution for Effortless Attendance Management

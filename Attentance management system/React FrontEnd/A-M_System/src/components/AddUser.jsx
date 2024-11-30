@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import bcrypt from 'bcryptjs';
 
 
 const AddUser = () => {
@@ -10,6 +11,7 @@ const AddUser = () => {
   const [Password,setpassword] = useState('');
   const [Role,setrole] = useState('');
 
+  //Don't forget to add fetch data from user database for checking userid exists
   const AddUserSubmit = async (userDetails) => {
     const res = await fetch('/api/addUser',{
         method:'POST',
@@ -27,13 +29,15 @@ const AddUser = () => {
         toast.error('Please check the input data');
     }
 };
-const handleSubmit = (e) => {
+const handleSubmit = async(e) => {
     e.preventDefault();
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(Password, 10);
     const NewuserDetails = {
       Name,
       employeeId,
         department,
-        Password,
+        Password:hashedPassword,
         Role
     };
     AddUserSubmit(NewuserDetails);
