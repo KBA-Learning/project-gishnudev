@@ -3,6 +3,7 @@ import bg from '../assets/images/background2.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Attenedlyicon from '../components/Attenedlyicon';
 
 const SignUp = () => {
     const [Name,setUserName] = useState('');
@@ -43,7 +44,6 @@ const SignUp = () => {
         signupSubmit(userDetails);
     }
 
-
   return (
     <div
       className="bg-cover bg-center min-h-screen flex items-center justify-center"
@@ -53,6 +53,9 @@ const SignUp = () => {
       }}
     >
       <ToastContainer/>
+      <div className='fixed top-0 left-0 m-4 '>
+        <Attenedlyicon />
+      </div>
       <div className="bg-white bg-opacity-90 shadow-lg rounded-lg w-full max-w-md p-8 mx-4">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Sign Up</h1>
         <form onSubmit={handleSubmit} className="space-y-6">

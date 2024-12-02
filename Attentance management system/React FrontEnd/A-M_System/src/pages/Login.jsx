@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Attenedlyicon from "../components/Attenedlyicon";
 
 const Login = () => {
   const [Name, setName] = useState("");
@@ -33,8 +34,7 @@ const Login = () => {
       const user = await data.json();
       console.log("User data:",user);
       console.log("Login success");
-
-
+      
       toast.success("Logging in...");
       setTimeout(() => {
         if (user === "admin") {
@@ -57,6 +57,9 @@ const Login = () => {
         backgroundImage: `url(${bgImage})`,
       }}
     >
+       <div className='fixed top-0 left-0 m-4 '>
+        <Attenedlyicon />
+      </div>
       <ToastContainer />
       <div className="bg-white bg-opacity-90 rounded-2xl shadow-lg max-w-4xl w-full overflow-hidden flex">
         {/* Left Section - Form */}

@@ -10,6 +10,7 @@ import ViewUser from '../components/ViewUser';
 import UserReq from '../components/UserReq';
 import Attentance from '../components/Attentance'
 import division from '../assets/symbols/user.png'
+import LogouButton from '../components/logouButton';
 
 const AdminDash = () => {
   const [activeComponent, setActiveComponent] = useState('dashboard'); // State to track the active component
@@ -93,6 +94,7 @@ const AdminDash = () => {
                 className="w-16 h-16 bg-gray-300 p-4 rounded-full shadow-md shadow-blue-300"
               />
               <h2 className="ml-4">Welcome Admin{adminName && `, ${adminName}`}</h2>
+              <LogouButton /> {/* Logout button added here */}
             </div>
           </div>
 
@@ -102,12 +104,6 @@ const AdminDash = () => {
               <div>
                 <h2 className="text-2xl font-bold">Welcome to the Dashboard</h2>
                 {/* Add dashboard-specific content here */}
-              </div>
-            )}
-            {activeComponent === 'settings' && (
-              <div>
-                <h2 className="text-2xl font-bold">Attentance Section</h2>
-                {/* Add settings-specific content here */}
               </div>
             )}
             {activeComponent === 'Attentance' && <Attentance />}

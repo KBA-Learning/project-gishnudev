@@ -9,6 +9,7 @@ import userImg from '../assets/symbols/user.png';
 import ViewUser from '../components/ViewUser';
 import LeaveRequest from '../components/leaveRequest';
 import MarkAttendance from '../components/MarkAttentance';
+import UserChart from '../components/UserChart';
 
 const LogoutButton = () => {
   const navigate = useNavigate();
@@ -103,7 +104,7 @@ const UserDash = () => {
                 alt=""
                 className="w-16 h-16 bg-gray-300 p-4 rounded-full shadow-md shadow-blue-300"
               />
-              <h2 className="ml-4">Welcome{userName && `, ${userName}`}</h2>
+              <h2 className="ml-4">Welcome User{userName && `, ${userName}`}</h2>
               {/* Logout Button */}
               <LogoutButton />
             </div>
@@ -111,12 +112,7 @@ const UserDash = () => {
 
           {/* Content Area */}
           <div className="contentClass p-6">
-            {activeComponent === 'dashboard' && (
-              <div>
-                <h2 className="text-2xl font-bold">Welcome to the Dashboard</h2>
-                {/* Add dashboard-specific content here */}
-              </div>
-            )}
+            {activeComponent === 'dashboard' && <UserChart/>}
             {activeComponent === 'MarkAttendance' && <MarkAttendance />}
             {activeComponent === 'Requestsleave' && <LeaveRequest />}
             {activeComponent === 'employees' && <ViewUser />}

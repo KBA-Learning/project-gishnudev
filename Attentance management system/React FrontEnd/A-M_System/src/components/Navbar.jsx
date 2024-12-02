@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Attenedlyicon from './Attenedlyicon';
 
 const Navbar = () => {
   return (
@@ -8,11 +9,9 @@ const Navbar = () => {
       {/* Navbar content */}
       <div className="relative z-10 flex items-center justify-end p-4 bg-black shadow-orange-800 shadow-sm ">
         {/* Logo */}
-        <img
-          className="w-18 h-16 mr-auto"
-          src="/src/assets/images/logo1.png"
-          alt="Logo"
-        />
+        <div className='fixed top-0 left-0 m-4 '>
+        <Attenedlyicon />
+      </div>
 
         {/* Navigation Links */}
         <nav className="flex space-x-6">

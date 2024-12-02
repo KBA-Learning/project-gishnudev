@@ -124,6 +124,8 @@ Route.post('/login', async (req, res) => {
 
 })
 
+
+
 Route.post('/logout', authenticate, (req, res) => {
     try {
         if (req.Role) {
@@ -269,13 +271,13 @@ Route.post('/addUser', authenticate, async (req, res) => {
 
 })
 
+//update user
 Route.patch('/updateUser', authenticate, async (req, res) => {
     try {
         console.log('Hello');
         console.log(req.Name);
-        console.log(req.Role);
 
-        const { Name, employeeId, department, Password, Role } = req.body;
+        const { Name, employeeId, department, Password } = req.body;
 
         if (req.Role === "admin") {
             // Update user document with the given employeeId
@@ -285,8 +287,7 @@ Route.patch('/updateUser', authenticate, async (req, res) => {
                     $set: {
                         Name: Name,
                         department: department,
-                        Password: Password,
-                        Role: Role
+                        Password: Password
                     }
                 },
                 { new: true } // return the updated document
@@ -310,7 +311,7 @@ Route.patch('/updateUser', authenticate, async (req, res) => {
 Route.delete('/deleteUser/:cid', authenticate, async (req, res) => {
     const employeeId = req.params.cid
     try {
-        const result = await user.findOneAndDelete({ employeeId: employeeId })
+        const result = await user.findOneAndDelete({ _id : employeeId })
         if (result) {
             res.status(200).json("employ deleted")
         }
@@ -366,19 +367,37 @@ Route.get('/viewAll', authenticate, async (req, res) => {
     }
 });
 
-Route.get('/viewAllLeave', authenticate, async (req, res) => {
+//view all leave by id
+Route.get('/viewallLeavebyid/:id', async (req, res) => {
     try {
-        const allLeave = await leave.find();
+        const Eleave = req.params.id
+        const allLeave = await leave.find({employee_Id:Eleave});
         if (allLeave.length > 0) {
             res.status(200).json(allLeave);
         } else {
-            res.status(404).json({ message: 'No employees found' });
+            res.status(404).json({ message: 'No leaves found' });
         }
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 });
+
+//view all leave 
+Route.get('/viewAllLeave', async (req, res) => {
+    try {
+        const allLeave = await leave.find();
+        if (allLeave.length > 0) {
+            res.status(200).json(allLeave);
+        } else {
+            res.status(404).json({ message: 'No leaves found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+});
+
 //view all attentance
 Route.get('/viewAllattentance', authenticate, async (req, res) => {
     try {
@@ -393,6 +412,39 @@ Route.get('/viewAllattentance', authenticate, async (req, res) => {
         res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 });
+
+//view attentance by id
+Route.get('/viewattentancebyid/:id', async (req, res) => {
+    try {
+        const empid = req.params.id
+        const attend = await attendance.findOne({employee_Id:empid});
+        if (attend) {
+            res.status(200).json(attend);
+        } else {
+            res.status(404).json({ message: 'No Attentance found with with this employee id' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+});
+
+//one omployee all attentance 
+Route.get('/viewallattentanceOnePersonbyid/:id', async (req, res) => {
+    try {
+        const empid = req.params.id
+        const attend = await attendance.find({employee_Id:empid});
+        if (attend) {
+            res.status(200).json(attend);
+        } else {
+            res.status(404).json({ message: 'No Attentance found with with this employee id' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+});
+
 
 Route.get('/adminName',async(req,res)=>{
     try{
