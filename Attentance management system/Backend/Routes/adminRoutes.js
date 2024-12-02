@@ -180,7 +180,7 @@ Route.post('/leaveRequest', authenticate, async (req, res) => {
         // Save the new leave request to the database
         await newLeaveRequest.save();
 
-        res.status(200).json({ message: "Leave Requested successfully", leave: newLeaveRequest });
+        res.status(200).json({leave: newLeaveRequest });
 
     } catch (error) {
         console.error(error);
@@ -429,7 +429,7 @@ Route.get('/viewattentancebyid/:id', async (req, res) => {
     }
 });
 
-//one omployee all attentance 
+//one employee all attentance 
 Route.get('/viewallattentanceOnePersonbyid/:id', async (req, res) => {
     try {
         const empid = req.params.id
@@ -444,6 +444,33 @@ Route.get('/viewallattentanceOnePersonbyid/:id', async (req, res) => {
         res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 });
+
+Route.get('/viewallattentanceToday', async (req, res) => {
+    try {
+        // Get today's date and format it as 'YYYY-MM-DD'
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);  // Set to midnight
+        const todayEnd = new Date();
+        todayEnd.setHours(23, 59, 59, 999);  // Set to end of the day
+
+        console.log(`Today's range: ${todayStart} to ${todayEnd}`);
+
+        // Find attendance records for today by checking if the timestamp is within today's date range
+        const attend = await attendance.find({
+            timestamp: { $gte: todayStart, $lt: todayEnd }
+        });
+
+        if (attend && attend.length > 0) {
+            res.status(200).json(attend);
+        } else {
+            res.status(404).json({ message: 'No attendance found for today' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+});
+
 
 
 Route.get('/adminName',async(req,res)=>{

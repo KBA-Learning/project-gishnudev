@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MarkAttendance = () => {
   const [userName, setUserName] = useState("");
@@ -17,7 +19,8 @@ const MarkAttendance = () => {
       fetchEmployeeId(storedUserName); // Fetch employee ID based on stored user name
     } else {
       console.error("Username not found in localStorage");
-      alert("User name not found. Please log in again.");
+      toast.error("User name not found. Please log in again")
+
     }
 
     // Set the current date using moment.js
@@ -38,11 +41,11 @@ const MarkAttendance = () => {
         checkAttendance(data.Result.employeeId, moment().format("YYYY-MM-DD"));
       } else {
         console.error("Failed to fetch employee ID");
-        alert("User not found in the database. Please check your login details.");
+        toast.error("User not found in the database. Please check your login details.")
       }
     } catch (error) {
       console.error("Error fetching employee ID:", error);
-      alert("An error occurred while fetching employee ID.");
+      toast.error("An error occurred while fetching employee ID.");
     }
   };
 
@@ -55,16 +58,15 @@ const MarkAttendance = () => {
         const data = await res.json();
         if (data.exists) {
           setAttendanceExists(true); // Mark attendance as already recorded
-          alert("Attendance already marked for today.");
+          toast.success("Attendance already marked for today.");
         } else {
           setAttendanceExists(false); // Allow marking attendance
         }
       } else {
-        console.error("Failed to check attendance status");
         setAttendanceExists(false);
       }
     } catch (error) {
-      console.error("Error checking attendance:", error);
+      toast.error("Error checking attendance:", error);
       setAttendanceExists(false);
     }
   };
@@ -83,15 +85,15 @@ const MarkAttendance = () => {
 
       if (res.ok) {
         alert("Attendance Marked Successfully");
+        toast.success("Attendance Marked Successfully.");
         setAttendanceExists(true); // Prevent further entries for today
       } else {
         const data = await res.json();
         console.error("Error response from server:", data);
-        alert("Failed to mark attendance. Please check the details.");
+        toast.error("Attendance already Marked.")
       }
     } catch (error) {
-      console.error("Error submitting attendance:", error);
-      alert("An error occurred while marking attendance.");
+      toast.error("Server Error");
     }
   };
 
@@ -122,7 +124,7 @@ const MarkAttendance = () => {
   return (
     <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg p-6">
       <h2 className="text-2xl font-bold mb-4">Mark Attendance</h2>
-
+      <ToastContainer/>
       <form onSubmit={onFormSubmit} className="space-y-4">
         {/* Employee ID Input */}
         <div>

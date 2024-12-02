@@ -11,6 +11,7 @@ import UserReq from '../components/UserReq';
 import Attentance from '../components/Attentance'
 import division from '../assets/symbols/user.png'
 import LogouButton from '../components/logouButton';
+import AdDash from '../components/AdDash';
 
 const AdminDash = () => {
   const [activeComponent, setActiveComponent] = useState('dashboard'); // State to track the active component
@@ -100,12 +101,7 @@ const AdminDash = () => {
 
           {/* Content Area */}
           <div className="contentClass p-6">
-            {activeComponent === 'dashboard' && (
-              <div>
-                <h2 className="text-2xl font-bold">Welcome to the Dashboard</h2>
-                {/* Add dashboard-specific content here */}
-              </div>
-            )}
+            {activeComponent === 'dashboard' && <AdDash/>}
             {activeComponent === 'Attentance' && <Attentance />}
             {activeComponent === 'addUser' && <AddUser />}
             {activeComponent === 'employees' && <ViewUser />}

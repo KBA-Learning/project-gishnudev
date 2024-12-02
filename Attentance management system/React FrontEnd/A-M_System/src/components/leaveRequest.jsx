@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LeaveRequest = () => {
   const [formData, setFormData] = useState({
@@ -78,6 +80,7 @@ const LeaveRequest = () => {
         endDate: "",
         reason: "",
       });
+      toast.success("Leave requested sucessfully")
     } catch (err) {
       console.error("Error submitting leave request:", err);
       setError(err.message || "An error occurred while submitting the request");
@@ -89,6 +92,8 @@ const LeaveRequest = () => {
       <h2 className="text-2xl font-bold mb-4">Leave Request</h2>
       {message && <p className="text-green-500 mb-4">{message}</p>}
       {error && <p className="text-red-500 mb-4">{error}</p>}
+
+      <ToastContainer/>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Employee ID Field (Read-Only) */}
