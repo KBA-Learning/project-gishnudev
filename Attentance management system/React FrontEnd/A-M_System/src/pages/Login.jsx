@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import bgImage from "../assets/images/background2.jpg"; // Adjust the path to match your project structure
 import sideImage from "../assets/images/background3.jpg"; // Adjust the path to match your project structure
 import { Link, useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ const Login = () => {
   const [Name, setName] = useState("");
   const [Password, setPassword] = useState("");
   const navigate = useNavigate();
+
 
   const loginSubmit = async (e) => {
     e.preventDefault();
